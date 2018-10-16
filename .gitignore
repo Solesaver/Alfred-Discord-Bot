@@ -59,7 +59,3 @@ typings/
 
 # next.js build output
 .next
-
-# private keys
-auth.json
-giphyauth.js
