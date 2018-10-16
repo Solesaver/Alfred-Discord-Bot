@@ -14,6 +14,8 @@ Installing
     Replace "Insert Bot Token here" in auth.json with your bot's token
     Make a Giphy developer account and app https://developers.giphy.com/
     Replace "Insert Giphy API key here" in giphyauth.js with your giphy api key
+    Run git update-index --assume-unchanged auth.json
+    Run git update-index --assume-unchanged giphyauth.js
 
 Deployment
     Add the discord bot you made to a server by going to https://discordapp.com/oauth2/authorize?&client_id=CLIENTID&scope=bot&permissions=8 but replacing CLIENTID with your app's client id.
