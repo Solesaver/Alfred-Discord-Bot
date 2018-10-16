@@ -1,0 +1,9 @@
+{
+  "name": "alfred",
+  "version": "1.0.1",
+  "description": "Discord Helper",
+  "main": "bot.js",
+  "author": "Trevor Bennett",
+  "dependencies": {
+  }
+}
