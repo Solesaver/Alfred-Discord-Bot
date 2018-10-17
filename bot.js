@@ -1,5 +1,5 @@
 var DiscordAPI = require('discord.io');
-var auth = require('./auth.json');
+var auth = require('./discordauth.js');
 var giphy = require('./giphyauth.js');
 
 var bot = new DiscordAPI.Client({
