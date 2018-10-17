@@ -24,7 +24,12 @@ const help = {
 };
 
 function CommandGiphy (user, userID, channelID, args) {
-    giphy.translate('gifs', {"s": args[1]})
+    let phrase = args[1];
+    if (args.length > 2) {
+        for (let i = 2; i < args.length; ++i)
+            phrase += '+' + args[i];
+    }
+    giphy.translate('gifs', {"s": phrase})
         .then((response) => {
             bot.sendMessage({
                 to: channelID,
