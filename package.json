@@ -2,6 +2,9 @@
   "name": "alfred",
   "version": "1.0.1",
   "description": "Discord Helper",
+  "scripts": {
+    "start": "node bot.js"
+  },
   "main": "bot.js",
   "author": "Trevor Bennett",
   "dependencies": {
