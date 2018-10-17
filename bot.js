@@ -1,12 +1,17 @@
+console.log('import discord.io');
 var DiscordAPI = require('discord.io');
+console.log('import discordauth');
 var auth = require('./discordauth.js');
+console.log('import giphyauth');
 var giphy = require('./giphyauth.js');
 
+console.log('creating and connecting bot');
 var bot = new DiscordAPI.Client({
    token: auth.token,
    autorun: true
 });
 
+console.log('setting up commands');
 const commands = ['giphy', 'ping', 'help']
 const execution = {
     giphy: CommandGiphy,
@@ -55,6 +60,7 @@ function CommandDefault (user, userID, channelID, args) {
     });
 }
 
+console.log('creating help message');
 let longest = 0;
 for (const entry of commands) {
     if (entry.length > longest)
@@ -72,6 +78,7 @@ for (const entry of commands) {
 };
 helpMessage += '```'
 
+console.log('set up message callback');
 bot.on('message', function (user, userID, channelID, message, evt) {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
