@@ -9,7 +9,7 @@ const path = require('path');
 console.log('import fs');
 const fs = require('fs');
 
-const data = '.' + process.env.OPENSHIFT_DATA_DIR
+const data = './data'
 
 
 console.log('creating and connecting bot');
@@ -23,7 +23,7 @@ const commands = ['giphy', 'ping', 'howmany', 'help']
 const execution = {
     giphy: CommandGiphy,
     ping: CommandPing,
-    howmany: CommandHowMany,
+    howmany: CommandDefault,
     help: CommandHelp
 }
 const help = {
