@@ -9,7 +9,7 @@ const path = require('path');
 console.log('import fs');
 const fs = require('fs');
 
-const data = process.env.OPENSHIFT_DATA_DIR
+const data = '.' + process.env.OPENSHIFT_DATA_DIR
 
 
 console.log('creating and connecting bot');
@@ -65,7 +65,6 @@ try {
     howmanyObj = require(howmanyPath);
 }
 catch (ex) {
-    console.log(howmanyPath);
     console.log('howmany.json does not exist');
 }
 
