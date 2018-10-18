@@ -9,6 +9,8 @@ const path = require('path');
 console.log('import fs');
 const fs = require('fs');
 
+const data = process.env.OPENSHIFT_DATA_DIR
+
 
 console.log('creating and connecting bot');
 var bot = new DiscordAPI.Client({
@@ -57,11 +59,13 @@ function CommandPing (user, userId, channelId, args) {
     });
 }
 
+const howmanyPath = data + '/howmany.json';
 let howmanyObj = {};
 try {
-    howmanyObj = require('./data/howmany.json');
+    howmanyObj = require(howmanyPath);
 }
 catch (ex) {
+    console.log(howmanyPath);
     console.log('howmany.json does not exist');
 }
 
@@ -116,8 +120,8 @@ function CommandHowMany (user, userId, channelId, args) {
         to: channelId,
         message: countMessage
     });
-    ensureDir('./data/howmany.json');
-    fs.writeFileSync('./data/howmany.json', JSON.stringify(howmanyObj, null, 4), 'utf8');
+    ensureDir(howmanyPath);
+    fs.writeFileSync(howmanyPath, JSON.stringify(howmanyObj, null, 4), 'utf8');
 }
 
 function CommandHelp (user, userId, channelId, args) {
