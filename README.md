@@ -8,7 +8,7 @@ Having finally convinced the crew to switch to Discord, Allie complained it didn
     * A Giphy API key
     
 ## Installing
-    * Have Node.js installed https://nodejs.org/en/, I used 8.12.0
+    * Have Node.js installed https://nodejs.org/en/, I used v12.19.0
     * Run install.cmd
     * Make a Discord bot https://discordapp.com/developers/applications/
     * Set the environment variable DISCORD_KEY to your bot's key
@@ -21,4 +21,3 @@ Having finally convinced the crew to switch to Discord, Allie complained it didn
     
 ## Authors
     * Trevor Bennett
-    * Daniel Jackson?
