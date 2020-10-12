@@ -1,5 +1,5 @@
 console.log('import discord.io');
-const DiscordAPI = require('discord.io');
+const DiscordAPI = require('discord.js');
 console.log('import discordauth');
 const auth = require('./discordauth.js');
 console.log('import giphyauth');
@@ -13,10 +13,13 @@ const data = './data'
 
 
 console.log('creating and connecting bot');
-var bot = new DiscordAPI.Client({
-   token: auth.token,
-   autorun: true
+var bot = new DiscordAPI.Client();
+
+bot.on('ready', () => {
+    console.log('Logged in as ' + bot.user.tag + '!');
 });
+
+bot.login(auth.token);
 
 console.log('setting up commands');
 const commands = ['giphy', 'ping', 'howmany', 'help']
@@ -28,35 +31,30 @@ const execution = {
 }
 const help = {
     giphy: "translate your words into a gif",
+    ping: "i'll say pong",
+    howmany: "not implemented yet",
     help: "you're looking at it"
 };
 
-function CommandGiphy (user, userId, channelId, args) {
+function CommandGiphy (user, channel, args) {
     let phrase = args[1];
     if (args.length > 2) {
         for (let i = 2; i < args.length; ++i)
             phrase += '+' + args[i];
     }
-    giphy.translate('gifs', {"s": phrase})
+    giphy.translate({s: phrase, rating: 'pg'})
         .then((response) => {
-            bot.sendMessage({
-                to: channelId,
-                message: response.data.embed_url
-            });
+            if (response.meta.msg === "OK") {
+                channel.send(response.data.embed_url);
+            }
         })
         .catch((err) => {
-            bot.sendMessage({
-                to: channelId,
-                message: 'Something went wrong with the giphy... thing...'
-            });
+            channel.send('Something went wrong with the giphy... thing...');
         });
 }
 
-function CommandPing (user, userId, channelId, args) {
-    bot.sendMessage({
-        to: channelId,
-        message: 'pong'
-    });
+function CommandPing (user, channel, args) {
+    channel.send('pong');
 }
 
 const howmanyPath = data + '/howmany.json';
@@ -77,9 +75,9 @@ function ensureDir (filepath) {
     fs.mkdirSync(dirname);
 }
 
-function CommandHowMany (user, userId, channelId, args) {
+function CommandHowMany (user, channel, args) {
     let count = howmanyObj['total'];
-    let yourCount = howmanyObj[userId];
+    let yourCount = howmanyObj[user.user.id];
     let countMessage = '';
     if (!count) {
         count = 1;
@@ -123,18 +121,12 @@ function CommandHowMany (user, userId, channelId, args) {
     fs.writeFileSync(howmanyPath, JSON.stringify(howmanyObj, null, 4), 'utf8');
 }
 
-function CommandHelp (user, userId, channelId, args) {
-    bot.sendMessage({
-        to: channelId,
-        message: helpMessage
-    });
+function CommandHelp (user, channel, args) {
+    channel.send(helpMessage);
 }
 
-function CommandDefault (user, userId, channelId, args) {
-    bot.sendMessage({
-        to: channelId,
-        message: "'!" + args[0] + "' is not a command... yet?\nTry typing '!help' to see what's available."
-    });
+function CommandDefault (user, channel, args) {
+    channel.send("'!" + args[0] + "' is not a command... yet?\nTry typing '!help' to see what's available.");
 }
 
 console.log('creating help message');
@@ -156,9 +148,10 @@ for (const entry of commands) {
 helpMessage += '```'
 
 console.log('set up message callback');
-bot.on('message', function (user, userId, channelId, message, evt) {
+bot.on('message', msg => {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
+    var message = msg.content;
     if (message.substring(0, 1) == '!') {
         const args = message.substring(1).split(' ');
         let command = args[0];
@@ -166,6 +159,9 @@ bot.on('message', function (user, userId, channelId, message, evt) {
         let callback = execution[command];
         if (!callback)
             callback = CommandDefault;
-        callback(user, userId, channelId, args);
+        callback(msg.author, msg.channel, args);
+    }
+    else if (msg.mentions.has(bot.user)) {
+        msg.channel.send("Hey " + msg.author.username + "!\nTry the '!help' command to see what I'm capable of!");
     }
 });

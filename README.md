@@ -16,7 +16,7 @@ Having finally convinced the crew to switch to Discord, Allie complained it didn
     * Set the environment variable GIPHY_KEY to your giphy key
 
 ## Deployment
-    * Add the discord bot you made to a server by going to https://discordapp.com/oauth2/authorize?&client_id=CLIENTID&scope=bot&permissions=8 but replacing CLIENTID with your app's client id.
+    * Add the discord bot you made to a server by going to https://discordapp.com/oauth2/authorize?&client_id=CLIENTID&scope=bot&permissions=0 but replacing CLIENTID with your app's client id.
     * Run bot.js on a server somewhere
     
 ## Authors
