@@ -9,7 +9,8 @@ const path = require('path');
 console.log('import fs');
 const fs = require('fs');
 
-const data = './data'
+const data = path.join(__dirname, 'data');
+let botData = data;
 
 
 console.log('creating and connecting bot');
@@ -17,6 +18,9 @@ var bot = new DiscordAPI.Client();
 
 bot.on('ready', () => {
     console.log('Logged in as ' + bot.user.tag + '!');
+    botData = path.join(data, bot.user.tag);
+    
+    const bot_data = path.join(data, bot.user.tag);
 });
 
 bot.login(auth.token);
@@ -26,13 +30,13 @@ const commands = ['giphy', 'ping', 'howmany', 'help']
 const execution = {
     giphy: CommandGiphy,
     ping: CommandPing,
-    howmany: CommandDefault,
+    howmany: CommandHowMany,
     help: CommandHelp
 }
 const help = {
     giphy: "translate your words into a gif",
-    ping: "i'll say pong",
-    howmany: "not implemented yet",
+    ping: "pong",
+    howmany: "I'll tell you how many times I've been asked that",
     help: "you're looking at it"
 };
 
@@ -57,15 +61,6 @@ function CommandPing (user, channel, args) {
     channel.send('pong');
 }
 
-const howmanyPath = data + '/howmany.json';
-let howmanyObj = {};
-try {
-    howmanyObj = require(howmanyPath);
-}
-catch (ex) {
-    console.log('howmany.json does not exist');
-}
-
 function ensureDir (filepath) {
     const dirname = path.dirname(filepath);
     if (fs.existsSync(dirname)) {
@@ -76,8 +71,18 @@ function ensureDir (filepath) {
 }
 
 function CommandHowMany (user, channel, args) {
+    const howmanyPath = path.join(botData, channel.guild.name, 'howmany.json');
+    ensureDir(howmanyPath);
+    let howmanyObj;
+    try {
+        howmanyObj = require(howmanyPath);
+    }
+    catch{
+        howmanyObj = {};
+    }
+    
     let count = howmanyObj['total'];
-    let yourCount = howmanyObj[user.user.id];
+    let yourCount = howmanyObj[user.tag];
     let countMessage = '';
     if (!count) {
         count = 1;
@@ -112,12 +117,8 @@ function CommandHowMany (user, channel, args) {
         countMessage += " You've already asked me that " + yourCount + " other times."
         ++yourCount;
     }
-    howmanyObj[userId] = yourCount;
-    bot.sendMessage({
-        to: channelId,
-        message: countMessage
-    });
-    ensureDir(howmanyPath);
+    howmanyObj[user.tag] = yourCount;
+    channel.send(countMessage);
     fs.writeFileSync(howmanyPath, JSON.stringify(howmanyObj, null, 4), 'utf8');
 }
 
