@@ -1,42 +1,39 @@
-console.log('import discord.io');
+console.log('import discord.js');
 const DiscordAPI = require('discord.js');
 console.log('import discordauth');
-const auth = require('./discordauth.js');
+const auth = require('./discordauth');
 console.log('import giphyauth');
-const giphy = require('./giphyauth.js');
-console.log('import path');
-const path = require('path');
-console.log('import fs');
-const fs = require('fs');
+const giphy = require('./giphyauth');
 
-const data = path.join(__dirname, 'data');
-let botData = data;
+const files = require('./files.js');
+
 
 
 console.log('creating and connecting bot');
 var bot = new DiscordAPI.Client();
 
+let botData = files.data;
 bot.on('ready', () => {
     console.log('Logged in as ' + bot.user.tag + '!');
-    botData = path.join(data, bot.user.tag);
-    
-    const bot_data = path.join(data, bot.user.tag);
+    botData = files.path.join(files.data, bot.user.tag);
 });
 
 bot.login(auth.token);
 
 console.log('setting up commands');
-const commands = ['giphy', 'ping', 'howmany', 'help']
+const commands = ['giphy', 'ping', 'howmany', 'adventure', 'help']
 const execution = {
     giphy: CommandGiphy,
     ping: CommandPing,
     howmany: CommandHowMany,
+    adventure: CommandAdventure,
     help: CommandHelp
 }
 const help = {
     giphy: "translate your words into a gif",
     ping: "pong",
     howmany: "I'll tell you how many times I've been asked that",
+    adventure: "go on an adventure",
     help: "you're looking at it"
 };
 
@@ -61,18 +58,10 @@ function CommandPing (user, channel, args) {
     channel.send('pong');
 }
 
-function ensureDir (filepath) {
-    const dirname = path.dirname(filepath);
-    if (fs.existsSync(dirname)) {
-        return true;
-    }
-    ensureDir(dirname);
-    fs.mkdirSync(dirname);
-}
-
 function CommandHowMany (user, channel, args) {
-    const howmanyPath = path.join(botData, channel.guild.name, 'howmany.json');
-    ensureDir(howmanyPath);
+    const howmanyPath = files.path.join(botData, channel.guild.name, 'howmany.json');
+    files.ensureDir(howmanyPath);
+    
     let howmanyObj;
     try {
         howmanyObj = require(howmanyPath);
@@ -119,7 +108,12 @@ function CommandHowMany (user, channel, args) {
     }
     howmanyObj[user.tag] = yourCount;
     channel.send(countMessage);
-    fs.writeFileSync(howmanyPath, JSON.stringify(howmanyObj, null, 4), 'utf8');
+    
+    files.fs.writeFileSync(howmanyPath, JSON.stringify(howmanyObj, null, 4), 'utf8');
+}
+function CommandAdventure (user, channel, args) {
+    const adventure = require('./adventure');
+    channel.send(adventure(botData, user, channel, args));
 }
 
 function CommandHelp (user, channel, args) {
