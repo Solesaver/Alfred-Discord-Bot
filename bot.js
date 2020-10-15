@@ -113,7 +113,8 @@ function CommandHowMany (user, channel, args) {
 }
 function CommandAdventure (user, channel, args) {
     const adventure = require('./adventure');
-    channel.send(adventure(botData, user, channel, args));
+    const message = adventure(botData, user, channel, args);
+    channel.send(message);
 }
 
 function CommandHelp (user, channel, args) {
